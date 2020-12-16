@@ -6,3 +6,5 @@ const GET_ORGANIZATION = `
   }
 }
 `;
+
+export { GET_ORGANIZATION };

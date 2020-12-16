@@ -1,12 +1,15 @@
 import React, { Component } from "react";
 import { axiosGitHubGraphQL } from "./components/axios";
 import { GET_ORGANIZATION } from "./components/query";
+import { Organization } from "./components/organization";
 
 class App extends Component {
   // Au lieu de définir l'état dans le constructeur
   // https://github.com/the-road-to-learn-react/react-alternative-class-component-syntax
   state = {
     path: "epfl-si/wp-veritas",
+    organization: null,
+    errors: null,
   };
 
   // La méthode componentDidMount du cycle de vie de React
@@ -17,9 +20,21 @@ class App extends Component {
   }
 
   onFetchFromGitHub = () => {
-    axiosGitHubGraphQL
-      .post("", { query: GET_ORGANIZATION })
-      .then((result) => console.log(result));
+    axiosGitHubGraphQL.post("", { query: GET_ORGANIZATION }).then((result) =>
+      // ici la solution du livre est un peu différente.
+      // je ne sais pas pourquoi, il préfère retourner
+      // une méthode plutôt que directement l'objet
+      //
+      // this.setState(() => ({
+      //   organization: result.data.data.organization,
+      //   errors: result.data.errors,
+      //   })),
+      //
+      this.setState({
+        organization: result.data.data.organization,
+        errors: result.data.errors,
+      })
+    );
   };
 
   onSubmit = (event) => {
@@ -40,7 +55,7 @@ class App extends Component {
   };
 
   render() {
-    const { path } = this.state;
+    const { path, organization, errors } = this.state;
     const TITLE = "React GrapQL Github Client";
     return (
       <div>
@@ -56,7 +71,12 @@ class App extends Component {
           />
           <button type="submit">Search</button>
         </form>
-
+        <hr />
+        {organization ? (
+          <Organization organization={organization} errors={errors} />
+        ) : (
+          <p>No information yet...</p>
+        )}
         <hr />
         {/* Afficher l'état du composant: */}
         <div>
