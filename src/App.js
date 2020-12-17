@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { axiosGitHubGraphQL } from "./components/axios";
-import { GET_ORGANIZATION } from "./components/query";
+import { GET_REPOSITORY_OF_ORGANIZATION } from "./components/query";
 import { Organization } from "./components/organization";
 
 class App extends Component {
@@ -20,7 +20,7 @@ class App extends Component {
   }
 
   onFetchFromGitHub = () => {
-    axiosGitHubGraphQL.post("", { query: GET_ORGANIZATION }).then((result) =>
+    axiosGitHubGraphQL.post("", { query: GET_REPOSITORY_OF_ORGANIZATION }).then((result) =>
       // ici la solution du livre est un peu différente.
       // je ne sais pas pourquoi, il préfère retourner
       // une méthode plutôt que directement l'objet
