@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { axiosGitHubGraphQL } from "./components/axios";
-import { GET_ISSUES_OF_REPOSITORY } from "./components/query";
+import { getIssuesOfRepositoryQuery } from "./components/query";
 import { Organization } from "./components/organization";
 
 class App extends Component {
@@ -16,12 +16,14 @@ class App extends Component {
   // est l'endroit idéal pour faire les appels aux données
   componentDidMount() {
     // fetch data
-    this.onFetchFromGitHub();
+    this.onFetchFromGitHub(this.state.path);
   }
 
-  onFetchFromGitHub = () => {
+  onFetchFromGitHub = (path) => {
+    const [organization, repository] = path.split("/");
+
     axiosGitHubGraphQL
-      .post("", { query: GET_ISSUES_OF_REPOSITORY })
+      .post("", { query: getIssuesOfRepositoryQuery(organization, repository) })
       .then((result) =>
         // ici la solution du livre est un peu différente.
         // je ne sais pas pourquoi, il préfère retourner
@@ -40,6 +42,8 @@ class App extends Component {
   };
 
   onSubmit = (event) => {
+    this.onFetchFromGitHub(this.state.path);
+
     // Ceci permet d'empêcher le comportement par défaut de l'événement
     // cad la soumission du formulaire sur l'événement submit
     event.preventDefault();

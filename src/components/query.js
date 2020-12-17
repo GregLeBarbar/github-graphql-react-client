@@ -1,9 +1,9 @@
-const GET_ISSUES_OF_REPOSITORY = `
+const getIssuesOfRepositoryQuery = (organization, repository) => `
 {
-  organization(login: "epfl-si") {
+  organization(login: "${organization}") {
     name
     url
-    repository(name: "wp-veritas") {
+    repository(name: "${repository}") {
       name
       url
       issues(last: 5) {
@@ -20,4 +20,4 @@ const GET_ISSUES_OF_REPOSITORY = `
 }
 `;
 
-export { GET_ISSUES_OF_REPOSITORY };
+export { getIssuesOfRepositoryQuery };
