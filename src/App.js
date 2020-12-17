@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { axiosGitHubGraphQL } from "./components/axios";
-import { getIssuesOfRepositoryQuery } from "./components/query";
+import { getIssuesOfRepository } from "./components/axios";
 import { Organization } from "./components/organization";
+import { resolveIssuesQuery } from "./components/query";
 
 class App extends Component {
   // Au lieu de définir l'état dans le constructeur
@@ -20,25 +20,9 @@ class App extends Component {
   }
 
   onFetchFromGitHub = (path) => {
-    const [organization, repository] = path.split("/");
-
-    axiosGitHubGraphQL
-      .post("", { query: getIssuesOfRepositoryQuery(organization, repository) })
-      .then((result) =>
-        // ici la solution du livre est un peu différente.
-        // je ne sais pas pourquoi, il préfère retourner
-        // une méthode plutôt que directement l'objet
-        //
-        // this.setState(() => ({
-        //   organization: result.data.data.organization,
-        //   errors: result.data.errors,
-        //   })),
-
-        this.setState({
-          organization: result.data.data.organization,
-          errors: result.data.errors,
-        })
-      );
+    getIssuesOfRepository(path).then((queryResult) =>
+      this.setState(resolveIssuesQuery(queryResult))
+    );
   };
 
   onSubmit = (event) => {
