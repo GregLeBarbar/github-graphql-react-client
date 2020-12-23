@@ -8,8 +8,7 @@ const axiosGitHubGraphQL = axios.create({
   },
 });
 
-const getIssuesOfRepository = (path) => {
-
+const getIssuesOfRepository = (path, cursor) => {
   const [organization, repository] = path.split("/");
 
   // Le 1er paramètre de la méthode post de axios est l'URL qui est toujours la même (spécificité de graphql)
@@ -18,8 +17,8 @@ const getIssuesOfRepository = (path) => {
   // Pour schématiser l'info qui est dans l'entry point dans une API REST et dans la requete en grapql.
   return axiosGitHubGraphQL.post("", {
     query: GET_ISSUES_OF_REPOSITORY,
-    variables: { organization, repository },
+    variables: { organization, repository, cursor },
   });
 };
 
-export { axiosGitHubGraphQL, getIssuesOfRepository };
+export { getIssuesOfRepository };
