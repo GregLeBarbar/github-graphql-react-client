@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_ISSUES_OF_REPOSITORY } from "./query";
+import { GET_ISSUES_OF_REPOSITORY, ADD_STAR } from "./query";
 
 const axiosGitHubGraphQL = axios.create({
   baseURL: "https://api.github.com/graphql",
@@ -21,4 +21,11 @@ const getIssuesOfRepository = (path, cursor) => {
   });
 };
 
-export { getIssuesOfRepository };
+const addStarToRepository = repositoryId => {
+  return axiosGitHubGraphQL.post('', {
+    query: ADD_STAR,
+    variables: { repositoryId },
+  });
+}
+
+export { getIssuesOfRepository, addStarToRepository };

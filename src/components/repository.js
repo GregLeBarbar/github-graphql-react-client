@@ -1,11 +1,19 @@
-const Repository = ({ repository, onFetchMoreIssues }) => {
-  console.log(repository);
+const Repository = ({ repository, onFetchMoreIssues, onStarRepository }) => {
   return (
     <div>
       <p>
         <strong>In repository</strong>&nbsp;
         <a href={repository.url}>{repository.name}</a>
       </p>
+      <button
+        type="button"
+        onClick={() => {
+          onStarRepository(repository.id, repository.viewerHasStarred);
+        }}
+      >
+        {repository.stargazers.totalCount}&nbsp;
+        {repository.viewerHasStarred ? "Unstar" : "Star"}
+      </button>
       <ul>
         {repository.issues.edges.map((issue) => (
           <li key={issue.node.id}>

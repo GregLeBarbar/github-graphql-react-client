@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { getIssuesOfRepository } from "./components/axios";
+import { getIssuesOfRepository, addStarToRepository } from "./components/axios";
 import { Organization } from "./components/organization";
-import { resolveIssuesQuery } from "./components/query";
+import { resolveIssuesQuery, resolveAddStarMutation } from "./components/query";
 
 class App extends Component {
   // Au lieu de définir l'état dans le constructeur
@@ -50,6 +50,13 @@ class App extends Component {
     this.onFetchFromGitHub(this.state.path, endCursor);
   };
 
+  onStarRepository = (repositoryId, viewerHasStarred) => {
+
+    addStarToRepository(repositoryId).then((mutationResult) =>
+      this.setState(resolveAddStarMutation(mutationResult))
+    );
+  };
+
   render() {
     const { path, organization, errors } = this.state;
     const TITLE = "React GrapQL Github Client";
@@ -73,6 +80,7 @@ class App extends Component {
             organization={organization}
             errors={errors}
             onFetchMoreIssues={this.onFetchMoreIssues}
+            onStarRepository={this.onStarRepository}
           />
         ) : (
           <p>No information yet...</p>

@@ -8,8 +8,13 @@ query (
     name
     url
     repository(name: $repository) {
+      id
       name
       url
+      stargazers {
+        totalCount
+      }
+      viewerHasStarred
       issues(first: 5, after: $cursor, states: [OPEN]) {
         edges {
           node {
@@ -35,6 +40,19 @@ query (
     }
   }
 }
+`;
+
+// https://docs.github.com/en/free-pro-team@latest/graphql/reference/mutations#addstar
+// Avec le lien ci-dessus (et les liens référencés dans cette page), on peut comprendre
+// comment on a définit les différents éléments de cette mutation
+const ADD_STAR = `
+  mutation ($repositoryId: ID!) {
+    addStar(input:{starrableId:$repositoryId}){
+      starrable {
+        viewerHasStarred
+      }
+    }
+  }
 `;
 
 /**
@@ -90,4 +108,36 @@ const resolveIssuesQuery = (queryResult, cursor) => (state) => {
   };
 };
 
-export { GET_ISSUES_OF_REPOSITORY, resolveIssuesQuery };
+const resolveAddStarMutation = (mutationResult) => (state) => {
+  // When resolving the promise from the mutation, you can find out about the viewerHasStarred
+  // property in the result. That’s because you defined this property as a field in your mutation.
+  // It returns a new state object for React’s local state, because you used the function in this.setState().
+  const { viewerHasStarred } = mutationResult.data.data.addStar.starrable;
+
+  const { totalCount } = state.organization.repository.stargazers;
+
+  // The spread operator syntax is used here, to update the deeply nested data structure.
+  // Only the viewerHasStarred property changes in the state object, because it’s the only
+  // property returned by the resolved promise from the successful request.
+  // All other parts of the local state stay intact.
+  return {
+    ...state,
+    organization: {
+      ...state.organization,
+      repository: {
+        ...state.organization.repository,
+        viewerHasStarred,
+        stargazers: {
+          totalCount: totalCount + 1,
+        },
+      },
+    },
+  };
+};
+
+export {
+  GET_ISSUES_OF_REPOSITORY,
+  ADD_STAR,
+  resolveIssuesQuery,
+  resolveAddStarMutation,
+};
